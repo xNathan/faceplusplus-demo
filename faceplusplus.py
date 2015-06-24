@@ -59,12 +59,16 @@ def message(url, main_url):
 def imgs(url, limit=10):
     imgcontent = requests.get(url, headers=headers).text  #crawl your webpage content
     #urllist = re.findall(r'http.+?\.jpg', imgcontent, re.I)  #analyze img urls
-    urllist = re.findall(r'<img.*src=\"(.*?)\"', imgcontent, re.I)  #analyze img urls
+    urllist = re.findall(r'<img.*src=\"(.*?\.jpg|gif|png)\"', imgcontent, re.I)  #analyze img urls
+    print urllist
     if not urllist:
         print 'images for this url are not found...'
     else:
-        url_set = set(url for url in urllist) # duplicat filter
+        url_set = set(url for url in urllist) # duplicate filter
         url_set = list(url_set)
+        url_length = len(url_set)
+        if limit > url_length:
+            limit = url_length
         for x, imgurl in enumerate(url_set[:limit]):
             if 'http' not in imgurl:
                 imgurl = urlparse.urljoin(url, imgurl)
@@ -78,6 +82,8 @@ if __name__ == "__main__":
     #Open the wesite url you want to analyze or open a file with urls
     with open('url_data.txt', 'rb') as F:
         for line in F.readlines():
+            print line
+            print line.split()
             url, limit = line.split()
             imgs(url, int(limit))
     out_file.close()
