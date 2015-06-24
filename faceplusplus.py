@@ -13,8 +13,8 @@ import json
 import time
 
 # Put your own API here
-face_api = '1bc17f562f65b08ea49e6a0bf70ec9b6'
-face_secret = 'xiPAiwbRpFt_pAdCVi72zHk6vWigyWsu'
+face_api = 'xxxxxx'
+face_secret = 'xxxxx'
 api_url = 'http://apicn.faceplusplus.com/v2/detection/detect'
 out_file = open('detailedfaceresult.csv', 'wb')
 csv_file = csv.writer(out_file)
