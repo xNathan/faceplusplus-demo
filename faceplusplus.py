@@ -67,6 +67,7 @@ def imgs(url, limit=10):
         url_set = set(url for url in urllist) # duplicate filter
         url_set = list(url_set)
         url_length = len(url_set)
+        # if limit is 0, it will crawl all pics in webpage
         if limit == 0:
             limit = url_length
         if limit > url_length:
