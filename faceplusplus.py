@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import csv
+import MySQLdb as mdb
 import re
 import urllib2
 import urlparse
@@ -22,6 +23,23 @@ csv_file.writerow(['main_url', 'url', 'face_id', 'gender', 'race', 'age', 'smili
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0',
 }
+
+try:
+    conn = mdb.connect('localhost', 'root', '123456', 'test_python')
+    cur = conn.cursor()
+    cur.execute("DROP TABLE IF EXISTS faceplusplus")
+    cur.execute("""CREATE TABLE faceplusplus(
+                    id INT PRIMARY KEY AUTO_INCREMENT,
+                    main_url VARCHAR(255),
+                    url VARCHAR(255),
+                    face_id VARCHAR(255),
+                    gender VARCHAR(10),
+                    race VARCHAR(50),
+                    age INT,
+                    smiling VARCHAR(50)) """)
+except mdb.Error, e:
+    print e
+
 
 #get the url and return json format data
 def message(url, main_url):
@@ -50,6 +68,12 @@ def message(url, main_url):
             main_url = main_url
             print main_url, url, face_id, gender, race, age, smiling
             csv_file.writerow([main_url, url, face_id, gender, race, age, smiling])
+            try:
+                cur.execute("""INSERT INTO faceplusplus(main_url, url, face_id, gender, race, age, smiling)
+                            VALUES(%s, %s, %s, %s, %s, %s, %s)""", [main_url, url, face_id, gender, race, age, smiling])
+            except mdb.Error, e:
+                print e
+                cur.rollback()
 
     except Exception, e:
         print e
@@ -90,6 +114,8 @@ if __name__ == "__main__":
             url, limit = line.split()
             imgs(url, int(limit))
     out_file.close()
+    conn.commit()
+    conn.close()
 
     '''
         txt file should be like this
