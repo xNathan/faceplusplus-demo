@@ -39,17 +39,17 @@ def message(url, main_url):
     '''
     data = response.json()
     try:
-        print data
-        gender = data['face'][0]['attribute']['gender']['value']
-        age = data['face'][0]['attribute']['age']['value']
-        race = data['face'][0]['attribute']['race']['value']
-        smiling = data['face'][0]['attribute']['smiling']['value']
-        face_id = data['face'][0]['face_id']
         url = data['url']
-        main_url = main_url
-        print main_url, url, face_id, gender, race, age, smiling
-        csv_file.writerow([main_url, url, face_id, gender, race, age, smiling])
-        #print face_id
+        #print data
+        for face in data['face']:
+            gender = face['attribute']['gender']['value']
+            age = face['attribute']['age']['value']
+            race = face['attribute']['race']['value']
+            smiling = face['attribute']['smiling']['value']
+            face_id = face['face_id']
+            main_url = main_url
+            print main_url, url, face_id, gender, race, age, smiling
+            csv_file.writerow([main_url, url, face_id, gender, race, age, smiling])
 
     except Exception, e:
         print e
@@ -67,6 +67,8 @@ def imgs(url, limit=10):
         url_set = set(url for url in urllist) # duplicate filter
         url_set = list(url_set)
         url_length = len(url_set)
+        if limit == 0:
+            limit = url_length
         if limit > url_length:
             limit = url_length
         for x, imgurl in enumerate(url_set[:limit]):
@@ -74,7 +76,7 @@ def imgs(url, limit=10):
                 imgurl = urlparse.urljoin(url, imgurl)
             print imgurl
             print u'Processing the %sth pictures...' % str(x+1)
-            #message(imgurl,url)
+            message(imgurl,url)
             #time.sleep(3)
 
 
